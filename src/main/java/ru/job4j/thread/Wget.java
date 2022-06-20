@@ -16,22 +16,26 @@ public class Wget implements Runnable {
 
     @Override
     public void run() {
+        String[] urlSplit = url.split("/");
+        String fileName = urlSplit[urlSplit.length - 1];
         try (BufferedInputStream in = new BufferedInputStream(new URL(url).openStream());
-             FileOutputStream fileOutputStream = new FileOutputStream("file_tmp")) {
+             FileOutputStream fileOutputStream = new FileOutputStream(fileName)) {
             byte[] dataBuffer = new byte[1024];
+            int downloadData = 0;
             long timeStart = System.currentTimeMillis();
             int bytesRead = in.read(dataBuffer, 0, 1024);
-            long timeEnd = System.currentTimeMillis();
-            long pause = 1024 / speed * 1000 - timeEnd + timeStart;
             while (bytesRead != -1) {
                 fileOutputStream.write(dataBuffer, 0, bytesRead);
-                if (pause > 0) {
-                    Thread.sleep(pause);
+                downloadData += bytesRead;
+                if (downloadData >= speed) {
+                    long timeDiff = System.currentTimeMillis() - timeStart;
+                    if (timeDiff < 1000) {
+                        Thread.sleep(1000 - timeDiff);
+                        downloadData = 0;
+                        timeStart = System.currentTimeMillis();
+                    }
                 }
-                timeStart = System.currentTimeMillis();
                 bytesRead = in.read(dataBuffer, 0, 1024);
-                timeEnd = System.currentTimeMillis();
-                pause = 1024 / speed * 1000 - timeEnd + timeStart;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -40,7 +44,14 @@ public class Wget implements Runnable {
         }
     }
 
+    private static void validate(String[] args) {
+        if (args.length < 2) {
+            throw new IllegalArgumentException("Wrong number of arguments");
+        }
+    }
+
     public static void main(String[] args) throws InterruptedException {
+        validate(args);
         String url = args[0];
         int speed = Integer.parseInt(args[1]);
         Thread wget = new Thread(new Wget(url, speed));
