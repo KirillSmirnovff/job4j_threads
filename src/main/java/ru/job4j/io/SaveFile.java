@@ -9,7 +9,7 @@ public final class SaveFile {
         this.file = file;
     }
 
-    public void saveContent(String content) {
+    public synchronized void saveContent(String content) {
         try (BufferedWriter o = new BufferedWriter(new FileWriter(file))) {
             for (int i = 0; i < content.length(); i += 1) {
                 o.write(content.charAt(i));
