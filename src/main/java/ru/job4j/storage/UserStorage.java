@@ -26,14 +26,12 @@ public class UserStorage {
         boolean result = false;
         User fromUser = users.get(fromId);
         User toUser = users.get(toId);
-        if (fromUser != null && toUser != null) {
+        if (fromUser != null && toUser != null && fromUser.getAmount() >= amount) {
             int fromUserAmount = fromUser.getAmount();
             int toUserAmount = toUser.getAmount();
-            if (fromUserAmount >= amount) {
-                fromUser.setAmount(fromUserAmount - amount);
-                toUser.setAmount(toUserAmount + amount);
-                result = true;
-            }
+            fromUser.setAmount(fromUserAmount - amount);
+            toUser.setAmount(toUserAmount + amount);
+            result = true;
         }
         return result;
     }
