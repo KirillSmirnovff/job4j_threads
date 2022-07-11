@@ -12,10 +12,14 @@ public class SimpleBlockingQueue<T> {
 
     @GuardedBy("this")
     private final Queue<T> queue = new LinkedList<>();
-    private final int limit;
+    private int limit = 10;
 
     public SimpleBlockingQueue(int limit) {
         this.limit = limit;
+    }
+
+    public SimpleBlockingQueue() {
+
     }
 
     public synchronized void offer(T value) {
@@ -45,5 +49,9 @@ public class SimpleBlockingQueue<T> {
 
     public synchronized Queue<T> getQueue() {
         return new LinkedList<>(queue);
+    }
+
+    public synchronized boolean isEmpty() {
+        return queue.isEmpty();
     }
 }
