@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.CoreMatchers.is;
@@ -16,9 +15,13 @@ public class SimpleBlockingQueueTest {
         SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>(2);
         Thread producer = new Thread(
                 () -> {
-                    IntStream.range(1, 5).forEach(
-                            queue::offer
-                    );
+                    for (int i = 1; i < 5; i++) {
+                        try {
+                            queue.offer(i);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
         );
         Thread interrupter = new Thread(
@@ -43,15 +46,23 @@ public class SimpleBlockingQueueTest {
         List<Integer> result = new ArrayList<>();
         Thread producer = new Thread(
                 () -> {
-                    IntStream.range(1, 5).forEach(
-                            queue::offer
-                    );
+                    for (int i = 1; i < 5; i++) {
+                        try {
+                            queue.offer(i);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
         );
         Thread consumer = new Thread(
                 () -> {
-                    for (int i = 0; i < 4; i++) {
-                        result.add(queue.poll());
+                    for (int i = 1; i < 5; i++) {
+                        try {
+                            result.add(queue.poll());
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
         );
