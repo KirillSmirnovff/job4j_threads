@@ -12,7 +12,7 @@ public class SimpleBlockingQueue<T> {
 
     @GuardedBy("this")
     private final Queue<T> queue = new LinkedList<>();
-    private int limit = 10;
+    private int limit = Integer.MAX_VALUE;
 
     public SimpleBlockingQueue(int limit) {
         this.limit = limit;
