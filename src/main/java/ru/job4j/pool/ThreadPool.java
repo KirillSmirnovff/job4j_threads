@@ -22,6 +22,7 @@ public class ThreadPool {
                         }
                     }
             );
+            thread.start();
             threads.add(thread);
         }
     }
@@ -34,5 +35,29 @@ public class ThreadPool {
         for (Thread thread : threads) {
             thread.interrupt();
         }
+    }
+
+    public static class SimpleJob implements Runnable {
+
+        private final int count;
+
+        public SimpleJob(int count) {
+            this.count = count;
+        }
+
+        @Override
+        public void run() {
+            System.out.println(Thread.currentThread().getName());
+            System.out.println(count);
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        ThreadPool pool = new ThreadPool();
+        for (int i = 0; i < 50; i++) {
+            pool.work(new SimpleJob(i));
+        }
+        Thread.sleep(5000);
+        pool.shutdown();
     }
 }
