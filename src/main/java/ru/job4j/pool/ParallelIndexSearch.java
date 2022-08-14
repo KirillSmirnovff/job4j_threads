@@ -40,12 +40,8 @@ public class ParallelIndexSearch<T> extends RecursiveTask<Integer> {
         return Math.max(left, right);
     }
 
-    public static void main(String[] args) {
-        Integer[] array = new Integer[100];
-        for (int i = 0; i < 100; i++) {
-            array[i] = i * 2;
-        }
+    public static <T> int getIndex(T value, T[] array) {
         ForkJoinPool forkJoinPool = new ForkJoinPool();
-        System.out.println(forkJoinPool.invoke(new ParallelIndexSearch<Integer>(50, array, 0, array.length - 1)));
+        return forkJoinPool.invoke(new ParallelIndexSearch<>(value, array, 0, array.length - 1));
     }
 }
