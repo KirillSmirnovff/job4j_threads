@@ -49,18 +49,8 @@ public class RolColSum {
         int length = matrix.length;
         Sums[] result = new Sums[length];
         Map<Integer, CompletableFuture<Sums>> futures = new HashMap<>();
-        if (length % 2 == 0) {
-            for (int i = 0; i < length / 2; i++) {
-                futures.put(i, getTask(matrix, i, length));
-                futures.put(length - 1 - i, getTask(matrix, length - 1 - i, length));
-            }
-        } else {
-            for (int i = 0; i <= length / 2; i++) {
-                futures.put(i, getTask(matrix, i, length));
-                if (i < length / 2) {
-                    futures.put(length - 1 - i, getTask(matrix, length - 1 - i, length));
-                }
-            }
+        for (int i = 0; i < length; i++) {
+            futures.put(i, getTask(matrix, i, length));
         }
         for (Integer key : futures.keySet()) {
             result[key] = futures.get(key).get();
